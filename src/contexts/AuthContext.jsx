@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   // }, []);
 useEffect(()=>{
 setLoading(false)
+if(localStorage.getItem('user'))
 setPresentUser(localStorage.getItem('user'))
 },[])
 const login = (user_id)=> {setPresentUser(user_id)}
