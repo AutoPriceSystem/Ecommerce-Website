@@ -3,7 +3,7 @@ import profilePic from "../Images/p8.png";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthProvider";
+import { useAuth } from "../contexts/AuthContext";
 import {
   ProfileContainer,
   ProfileImage,
@@ -13,7 +13,6 @@ import {
 
 const ProfileDropdown = () => {
   const { presentUser } = useAuth();
-  console.log("Present User in ProfileDropdown:", presentUser);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();

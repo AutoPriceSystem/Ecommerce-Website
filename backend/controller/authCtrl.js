@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../models/usermodel');
 
 // Login function
 const login = async (req, res) => {
@@ -7,28 +7,47 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ $or: [{ mobile }, { email }] });
     if (user) {
-      return res.status(200).send("success");
+      return res.status(200).send({message:"success",userId: user._id});
+      
     } else {
-      return res.status(400).send("failed");
+      return res.status(404).send("User doesn't exist");
     }
   } catch (error) {
     res.status(400).send("failed");
   }
 };
 
+
 // Register function
 const register = async (req, res) => {
   try {
     const { name, mobile, email, address } = req.body;
 
-    const newUser = new User({ name, mobile, email, address, purchase_history: [] });
+    // Check if the user already exists
+    const existingUser = await User.findOne({ $or: [{ mobile }, { email }] });
+    if (existingUser) {
+      return res.status(400).send("User already exists");
+    }
+
+    // Create a new user
+    const newUser = new User({
+      name,
+      mobile,
+      email,
+      address,
+      purchase_history: []
+    });
+
+    // Save the user to the database
     await newUser.save();
 
-    res.status(200).send("success");
+    res.status(200).send({message:"User registered successfully"});
   } catch (error) {
-    res.status(400).send("failed");
+    res.status(400).send("Failed to register user");
   }
 };
+
+
 
 // Logout function
 const logout = (req, res) => {

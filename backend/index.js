@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const dbConnect = require('./config/dbConnect');
 const dotenv = require('dotenv').config();
@@ -6,9 +5,14 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const productRouter = require('./routes/productRoute');
 const authRouter = require("./routes/authRoute");
-const billingRouter = require('./routes/billingRoute');
-const cartRouter = require("./routes/cartRoute");
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
+const billingRouter = require('./routes/billingRoute');
+const cartRouter = require("./routes/cartRoute"); // Import cartRouter
+
+const userRoutes = require('./routes/userRoutes');
+
+
+
 const cors = require('cors');
 
 const app = express();
@@ -26,14 +30,20 @@ app.use(cookieParser());
 app.use(cors());
 
 // Routes
-app.use("/api/product", productRouter);
+app.use('/api/products', productRouter);
 app.use("/api/user", authRouter);
-app.use("/api/billing", billingRouter); 
-app.use("/api/cart", cartRouter);
+app.use("/api/billing", billingRouter);
+app.use("/api/cart", cartRouter); // Use cartRouter
+app.use('/', userRoutes); 
+// app.use('/api/products', billingRouter);
+app.use((req, res, next) => {
+    res.status(404).send("Not Found");
+});
+
 
 // Error Handlers
-app.use(notFound); // Handle 404 errors
-app.use(errorHandler); // Handle all other errors
+app.use(notFound);
+app.use(errorHandler);
 
 // Start the server
 app.listen(PORT, () => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import useAuth from "../hooks/useAuth";
+import useAuthFunctions from "../hooks/useAuth";
 import {
   Container,
   FormContainer,
@@ -12,7 +12,7 @@ import {
 } from "../StyledComponents/SignUpPageStyles";
 
 const SignUpPage = () => {
-  const { data, changeHandler, signUp } = useAuth();
+  const { data, changeHandler, signUp } = useAuthFunctions();
   const {
     register,
     handleSubmit,
@@ -68,6 +68,7 @@ const SignUpPage = () => {
                 },
               })}
               value={data.mobile}
+              onChange={changeHandler}
               name="mobile"
               hasError={!!errors.mobile}
             />
@@ -139,6 +140,25 @@ const SignUpPage = () => {
             {errors.confirmPassword && (
               <ErrorMessage initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 {errors.confirmPassword.message}
+              </ErrorMessage>
+            )}
+          </div>
+
+          <div>
+            <label>Address</label>
+            <InputField
+              type="text"
+              {...register("address", {
+                required: "address is required",
+                onChange: changeHandler,
+              })}
+              value={data.address}
+              name="address"
+              hasError={!!errors.name}
+            />
+            {errors.name && (
+              <ErrorMessage initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                {errors.name.message}
               </ErrorMessage>
             )}
           </div>
