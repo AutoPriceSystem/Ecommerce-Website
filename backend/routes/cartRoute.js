@@ -15,7 +15,7 @@ router.post("/user-cart", async (req, res) => {
 
       res.status(200).json(cart);
     } else {
-      res.status(404).json({ message: "Cart not found." });
+      res.status(200).json({ message: "Cart not found." });
     }
   } catch (err) {
     res.status(500).json({ message: "Error fetching cart items" });

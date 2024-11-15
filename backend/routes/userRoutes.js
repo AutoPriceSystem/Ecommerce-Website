@@ -3,6 +3,6 @@ const express = require("express");
 const router = express.Router();
 const { getUserById } = require("../controller/userCtrl.js");
 
-router.get("/user/:user_id", getUserById);
+router.post("/user/getUserDetails", getUserById);
 
 module.exports = router;

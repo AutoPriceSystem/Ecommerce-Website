@@ -5,15 +5,15 @@ const login = async (req, res) => {
   try {
     const { mobile, email } = req.body;
 
-    const user = await User.findOne({ $or: [{ mobile }, { email }] });
+    const user = await User.findOne({ $and: [{ mobile }, { email }] });
     if (user) {
       return res.status(200).send({message:"success",userId: user._id});
       
     } else {
-      return res.status(404).send("User doesn't exist");
+      return res.status(404).send({message:"Invalid Credentials"});
     }
   } catch (error) {
-    res.status(400).send("failed");
+    res.status(400).send({message:"Login failed"});
   }
 };
 
@@ -22,11 +22,12 @@ const login = async (req, res) => {
 const register = async (req, res) => {
   try {
     const { name, mobile, email, address } = req.body;
-
+  
     // Check if the user already exists
     const existingUser = await User.findOne({ $or: [{ mobile }, { email }] });
     if (existingUser) {
-      return res.status(400).send("User already exists");
+      return res.status(400).send({message:"Mobile Number or Email already exists"});
+      
     }
 
     // Create a new user
@@ -42,8 +43,9 @@ const register = async (req, res) => {
     await newUser.save();
 
     res.status(200).send({message:"User registered successfully"});
+  
   } catch (error) {
-    res.status(400).send("Failed to register user");
+    res.status(400).send({message:"Failed to register user"});
   }
 };
 

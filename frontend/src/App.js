@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import {  useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { OfferProvider } from "./contexts/OfferContext";
 import { ProductProvider } from "./contexts/ProductContext";
@@ -16,20 +16,20 @@ import Footer from "./components/Footer";
 import CartDropdown from "./components/CartDropdown";
 import Checkout  from "./components/CheckoutPage";
 import AdminDashBoard from "./Admin/Dashboard";
+import PageNotFound from "./components/PageNotFound";
 const App = () => {
 
+  const {presentUser,adminId} = useAuth()
 
-  // State to store cart items
-  const [cartItems, setCartItems] = useState([]);
 
   return (
-    <AuthProvider>
+
       <CartProvider>
         <OfferProvider>
           <ProductProvider>
         <Router>
           <Navbar />
-          <CartDropdown cartItems={cartItems} />
+          <CartDropdown />
           <main>
             <div style={{ padding: "90px 30px" }}>
               <Routes>
@@ -43,15 +43,7 @@ const App = () => {
                     </>
                   }
                 />
-                <Route
-                  path="/shop"
-                  element={
-                    <CategorySection
-                      cartItems={cartItems}
-                      setCartItems={setCartItems}
-                    />
-                  }
-                />
+                <Route path="/shop" element={<CategorySection   /> }/>
                 <Route path="/checkout"  element={<Checkout />} />
                 
      
@@ -59,7 +51,7 @@ const App = () => {
          
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/admin" element={<AdminDashBoard />} />
+                <Route path="/admin" element={presentUser==adminId ?<AdminDashBoard />:<PageNotFound/>} />
               </Routes>
             </div>
           </main>
@@ -68,7 +60,7 @@ const App = () => {
         </ProductProvider>
         </OfferProvider>
       </CartProvider>
-    </AuthProvider>
+
   );
 };
 

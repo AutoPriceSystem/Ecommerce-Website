@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
 import useAuthFunctions from "../hooks/useAuth";
 import {
   Container,
@@ -10,7 +9,8 @@ import {
   ErrorMessage,
   Button,
 } from "../StyledComponents/LoginPageStyle";
-
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 const LoginPage = () => {
   const { data, changeHandler, signIn, goToSignUp } = useAuthFunctions();
   const {
@@ -19,17 +19,29 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = () => {
-    signIn();
+  const onSubmit = async() => {
+    const result = await signIn();
+    if(result)
+    notifyError(result)
+  };
+
+  const notifyError = (err) => {
+    toast.error(err, {
+      position: "bottom-center",
+      autoClose: 3000,
+
+    });
   };
 
   return (
-    <Container>
+    <Container >
+           <ToastContainer /> 
       <FormContainer
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
+  
         <Title>Login</Title>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -90,6 +102,7 @@ const LoginPage = () => {
           </div>
 
           <Button
+
             type="submit"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -111,6 +124,7 @@ const LoginPage = () => {
           </Button>
         </form>
       </FormContainer>
+
     </Container>
   );
 };

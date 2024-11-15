@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import profilePic from "../Images/p8.png";
-import { auth } from "../firebase";
-import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -10,8 +8,9 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "../StyledComponents/ProfileDropdownStyles";
-
+import useAuthFunctions from "../hooks/useAuth";
 const ProfileDropdown = () => {
+  const {signout}  = useAuthFunctions()
   const { presentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -33,8 +32,7 @@ const ProfileDropdown = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      navigate("/login");
+      signout()
       console.log("User signed out successfully");
     } catch (error) {
       console.error("Error signing out:", error);

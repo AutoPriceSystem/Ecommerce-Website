@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
 import useAuthFunctions from "../hooks/useAuth";
 import {
   Container,
@@ -10,7 +9,8 @@ import {
   ErrorMessage,
   Button,
 } from "../StyledComponents/SignUpPageStyles";
-
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 const SignUpPage = () => {
   const { data, changeHandler, signUp } = useAuthFunctions();
   const {
@@ -22,12 +22,24 @@ const SignUpPage = () => {
 
   const password = watch("password");
 
-  const onSubmit = () => {
-    signUp();
+  const notifyError = (err) => {
+    toast.error(err, {
+      position: "bottom-center",
+      autoClose: 3000,
+
+    });
+  };
+
+
+  const onSubmit = async() => {
+    const result = await signUp();
+    if(result)
+      notifyError(result)
   };
 
   return (
     <Container>
+               <ToastContainer /> 
       <FormContainer
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1 }}

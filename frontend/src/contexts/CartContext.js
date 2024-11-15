@@ -10,8 +10,9 @@ export const CartProvider = ({ children }) => {
   const { presentUser } = useAuth();
 
   useEffect(()=>{
+    console.log(presentUser)
   fetchCartItems(presentUser)
-  },[])
+  },[presentUser])
   // Fetch cart items from backend
   const fetchCartItems = async () => {
     try {
@@ -21,6 +22,9 @@ export const CartProvider = ({ children }) => {
       if (response.data && response.data.items) {
         setCartItems(response.data.items);
       } 
+      else if (response.data && response.data.message=="Cart not found."){
+        setCartItems([])
+      }
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -34,7 +38,7 @@ export const CartProvider = ({ children }) => {
         userId:presentUser,
         productId,productTitle,productCategory,productImage,product_Original_Price
       });
-      if (response.data ) {
+      if (response.data && response.data.items) {
         setCartItems(response.data.items);
       }
       else{

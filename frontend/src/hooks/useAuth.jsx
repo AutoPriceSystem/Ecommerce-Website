@@ -12,52 +12,69 @@ import {
 const useAuthFunctions = () => {
   const [data, setData] = useState({ email: "", password: "", name:"", mobile:"", address:"" });
   const navigate = useNavigate();
-  const {  login } = useAuth();
+  const {  login,logout,presentUser,SetUserDetails } = useAuth();
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  console.log("'-----------", data);
 
   const signIn = async () => {
     const { email, password,mobile } = data;
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+try{
+      await signInWithEmailAndPassword(auth, email, password)
+}
+      catch (error) {
+       
+      return error.code
+    }
+try{
       await axios.post("http://localhost:5000/api/user/login",{
         email: email,
         mobile: mobile,
-        }).then((res)=>{  localStorage.setItem('user',res.data.userId);
-          login(res.data.userId);
-            navigate("/") //redirect to home page 
-          })
+        }).then(async(res)=>{  localStorage.setItem('user',res.data.userId);
+          await login(res.data.userId);
 
-    } catch (err) {
-      console.error("Error signing in:", err.message);
+          })
+        }
+          catch (err) {
+       
+     return err.response.data.message
+    }
+    try{
+      
+      await axios.post(`http://localhost:5000/user/getUserDetails`,{
+        userId:presentUser
+      }).then((res)=> {console.log(res.data);SetUserDetails(res.data);navigate("/") })
+    }catch(err){
+      return err.response.data.message
     }
   };
 
   const signUp = async () => {
     const { email, password, name , mobile, address } = data;
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
+
+    try{
       await axios.post("http://localhost:5000/api/user/register",{
       name : name,
       email: email,
       mobile: mobile,
       address: address
-      }).then(async()=>{
-        console.log("User signed up");
-        await signOut(auth);
-        navigate("/login"); // Redirect to login page after sign up
       })
 
     } catch (err) {
-      console.error("Error signing up:", err.message);
+      return  err.response.data.message
     }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password).then(async()=>{
+        await signOut(auth);
+        navigate("/login"); // Redirect to login page after sign up
+      })
+    }catch(err){
+      return err.code
+    }
+
+
   };
 
   const goToSignUp = () => {
@@ -67,12 +84,16 @@ const useAuthFunctions = () => {
   const goToLogin = () => {
     navigate("/login");
   };
-
+  const signout=()=>{
+    signOut(auth)
+    logout()
+  }
   return {
     data,
     changeHandler,
     signIn,
     signUp,
+    signout,
     goToSignUp,
     goToLogin,
   };

@@ -10,9 +10,9 @@ import { useCart } from "../contexts/CartContext";
 import { useProduct } from "../contexts/ProductContext";
 
 const CategorySection = () => {
-  const { addToCart, fetchCartItems } = useCart();
+  const { addToCart } = useCart();
   const { presentUser } = useAuth();
-  const {Products,searchProduct} = useProduct()
+  const {Products} = useProduct()
  
 
   const handleAddToCart = async (productId,productTitle,productCategory,productImage,product_Original_Price) => {
