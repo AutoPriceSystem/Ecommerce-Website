@@ -1,5 +1,5 @@
 const User = require('../models/usermodel');
-
+const jwt = require('jsonwebtoken');
 // Login function
 const login = async (req, res) => {
   try {
@@ -7,7 +7,14 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ $and: [{ mobile }, { email }] });
     if (user) {
-      return res.status(200).send({message:"success",userId: user._id});
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET, // The secret key to sign the JWT
+ // Set expiration to 1 hour
+    );
+      return res.status(200).send({message:"success",userId: user._id, token});
       
     } else {
       return res.status(404).send({message:"Invalid Credentials"});
@@ -54,6 +61,6 @@ const register = async (req, res) => {
 // Logout function
 const logout = (req, res) => {
   res.status(200).send("success");
-};
+}
 
 module.exports = { login, register, logout };

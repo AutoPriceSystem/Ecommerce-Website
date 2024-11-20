@@ -31,22 +31,24 @@ try{
       await axios.post("http://localhost:5000/api/user/login",{
         email: email,
         mobile: mobile,
-        }).then(async(res)=>{  localStorage.setItem('user',res.data.userId);
-          await login(res.data.userId);
-
-          })
+        }).then(async(result)=>{localStorage.setItem('token',result.data.token);await axios.post(`http://localhost:5000/user/getUserDetails`,{
+          userId:result.data.userId
+}).then((res)=> {SetUserDetails(res.data);login(res.data._id);navigate("/"); })})
         }
           catch (err) {
-       
-     return err.response.data.message
+       if(err.response)
+      return err.response.data.message
+    else
+    return err.message
     }
     try{
       
-      await axios.post(`http://localhost:5000/user/getUserDetails`,{
-        userId:presentUser
-      }).then((res)=> {console.log(res.data);SetUserDetails(res.data);navigate("/") })
+      
     }catch(err){
-      return err.response.data.message
+      if(err.response)
+        return err.response.data.message
+      else
+      return err.message
     }
   };
 

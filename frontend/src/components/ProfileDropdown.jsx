@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import profilePic from "../Images/p8.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useLocation} from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
   ProfileContainer,
@@ -15,7 +15,7 @@ const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
+  const location = useLocation()
   const goToProfile = () => {
     navigate("/Profile");
   };
@@ -34,6 +34,8 @@ const ProfileDropdown = () => {
     try {
       signout()
       console.log("User signed out successfully");
+      if(location.pathname=="/Profile")
+        navigate("/login")
     } catch (error) {
       console.error("Error signing out:", error);
     }

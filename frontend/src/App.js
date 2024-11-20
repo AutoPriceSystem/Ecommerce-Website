@@ -17,6 +17,7 @@ import CartDropdown from "./components/CartDropdown";
 import Checkout  from "./components/CheckoutPage";
 import AdminDashBoard from "./Admin/Dashboard";
 import PageNotFound from "./components/PageNotFound";
+import OrderPage from "./components/OrderPage";
 const App = () => {
 
   const {presentUser,adminId} = useAuth()
@@ -48,7 +49,10 @@ const App = () => {
                 
      
                 <Route path="/products" element={<ProductCard />} />
-         
+                <Route
+                    path="/orders"
+                    element={<OrderPage  />}
+                  />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/admin" element={presentUser==adminId ?<AdminDashBoard />:<PageNotFound/>} />

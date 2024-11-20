@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner"; // Import the loading spinner
 
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -13,13 +14,18 @@ export const AuthProvider = ({ children }) => {
   
 useEffect(()=>{
 setLoading(false)
-if(localStorage.getItem('user'))
-setPresentUser(localStorage.getItem('user'))
+if(  localStorage.getItem('user') &&  localStorage.getItem('token')){
+  const item  = localStorage.getItem('user')
+  const obj = JSON.parse(item);
+setPresentUser(obj._id)
+setPresentUserDetails(obj)
+}
 },[])
 
-const SetUserDetails = (user_obj)=>{setPresentUserDetails(user_obj)}
+
+const SetUserDetails = (user_obj)=>{setPresentUserDetails(user_obj);localStorage.setItem('user',JSON.stringify(user_obj))}
 const login = (user_id)=> {setPresentUser(user_id)}
-const logout = () => {setPresentUser(null);localStorage.removeItem('user')}
+const logout = () => {setPresentUser(null);localStorage.removeItem('user');localStorage.removeItem('token')}
   return (
     <AuthContext.Provider value={{ presentUser,login, adminId, logout,presentUserDetails,SetUserDetails }}>
       {loading ? <LoadingSpinner /> : children}
