@@ -122,7 +122,6 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 
 async function fetchRealTimePages() {
   try {
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
     
     const response = await analyticsDataClient.runRealtimeReport({
       property: 'properties/467698068', 
@@ -139,11 +138,41 @@ async function fetchRealTimePages() {
       ],
      
     });
-
+    
     console.log('Real-Time Website User count:', response[0].rows[0].metricValues[0].value)
   } catch (error) {
-    console.error('Error fetching real-time data:', error);
+    console.error('Error fetching real-time data:', error)
   }
 }
 
-fetchRealTimePages();
+//fetchRealTimePages();
+
+const onnxruntime = require('onnxruntime-node');
+const fs = require('fs')
+   async function runInference() {
+    const session = await onnxruntime.InferenceSession.create('./model.onnx');
+ 
+
+       const scalerParams = JSON.parse(fs.readFileSync('scaler_params.json'));
+
+       // Input data (replace this with the actual input you want to standardize)
+       const inputData = [1, 10, 7, -50];
+   
+       // Standardize the input data using the scaler parameters
+       const standardizedInput = inputData.map((value, index) => {
+           return (value - scalerParams.mean[index]) / scalerParams.scale[index];
+       });
+
+   
+       // Create the input tensor for the model
+       const tensor = new onnxruntime.Tensor('float32', new Float32Array(standardizedInput), [1, 4]);
+
+
+       // Run inference
+       const outputs = await session.run({ input: tensor });
+
+       // Access the output
+       console.log(outputs.variable.cpuData[0]);
+   }
+
+   runInference();
