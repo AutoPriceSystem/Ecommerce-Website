@@ -15,7 +15,7 @@ import Categories from "./components/categoryBar";
 import Footer from "./components/Footer";
 import CartDropdown from "./components/CartDropdown";
 import Checkout  from "./components/CheckoutPage";
-import AdminDashBoard from "./Admin/Dashboard";
+import Admin from "./Admin/Adminpage";
 import PageNotFound from "./components/PageNotFound";
 import OrderPage from "./components/OrderPage";
 const App = () => {
@@ -55,7 +55,7 @@ const App = () => {
                   />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/admin" element={presentUser==adminId ?<AdminDashBoard />:<PageNotFound/>} />
+                <Route path="/admin" element={presentUser==adminId ?<Admin />:<PageNotFound/>} />
               </Routes>
             </div>
           </main>

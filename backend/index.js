@@ -117,9 +117,11 @@ const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
 // Create a client for the API
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: 'service-account-key.json',
+  credentials: {
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+  },
 });
-
 async function fetchRealTimePages() {
   try {
     
@@ -145,7 +147,7 @@ async function fetchRealTimePages() {
   }
 }
 
-//fetchRealTimePages();
+fetchRealTimePages();
 
 const onnxruntime = require('onnxruntime-node');
 const fs = require('fs')
@@ -175,4 +177,4 @@ const fs = require('fs')
        console.log(outputs.variable.cpuData[0]);
    }
 
-   runInference();
+   //runInference();

@@ -11,7 +11,7 @@ import {
 import useAuthFunctions from "../hooks/useAuth";
 const ProfileDropdown = () => {
   const {signout}  = useAuthFunctions()
-  const { presentUser } = useAuth();
+  const { presentUser,adminId } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -55,14 +55,23 @@ const ProfileDropdown = () => {
         alt="Profile"
         onClick={handleDropdownToggle}
       />
-      {presentUser ? (
+      {presentUser ==adminId? (
         <DropdownMenu isOpen={isOpen}>
-          <DropdownItem onClick={goToProfile}>My Profile</DropdownItem>
+    
           <DropdownItem href="/settings">Settings</DropdownItem>
           <DropdownItem href="/help">Help</DropdownItem>
           <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
         </DropdownMenu>
-      ) : (
+      ) : 
+      (
+        <DropdownMenu>
+        <DropdownItem onClick={goToProfile}>My Profile</DropdownItem>
+        <DropdownItem href="/settings">Settings</DropdownItem>
+        <DropdownItem href="/help">Help</DropdownItem>
+        <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+        </DropdownMenu>
+      )
+      (
         <DropdownMenu isOpen={isOpen}>
           <DropdownItem href="/settings">Settings</DropdownItem>
           <DropdownItem href="/help">Help</DropdownItem>

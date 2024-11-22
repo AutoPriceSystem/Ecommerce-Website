@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from "axios";
+import { useOffer } from '../contexts/OfferContext';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -27,6 +28,7 @@ const AdminDashBoard = () => {
     const [currentMonthIndex, setCurrentMonthIndex] = React.useState(new Date().getMonth()); // Track current month (0-11)
     const [salesData, setSalesData] = React.useState(null); // Store the sales data for the current month
     const [allProducts, setAllProducts] = React.useState([]);
+    const {toggleOffer, Offer} = useOffer()
 
     React.useEffect(() => {
         // Fetch all products
@@ -111,11 +113,12 @@ const AdminDashBoard = () => {
             return sum + percentageDifference;
         }, 0) / product.sales_history.length
         : null;
-
+    
+    
     return (
         <div>
-            <h1>Admin Dashboard</h1>
-            <h2>Product Sales</h2>
+          
+            <h1>Product Sales</h1>
             <img src={product.Image} alt={product.Title} />
             <h4>{product.Title}</h4>
             <p>${product.Original_Price}</p>
@@ -136,6 +139,13 @@ const AdminDashBoard = () => {
             {salesData && (
                 <Line data={chartData} options={chartOptions} />
             )}
+
+<div>
+        <button onClick={()=>toggleOffer()}>Toggle Season Offer</button>
+        <p>Season Offer: {Offer ? "Yes" : "No"}</p>
+
+        
+        </div>
         </div>
     );
 };
