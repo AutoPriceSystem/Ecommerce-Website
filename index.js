@@ -61,8 +61,18 @@ const getQuotes = async () => {
   // - a visible browser (`headless: false` - easier to debug because you'll see the browser in action)
   // - no default viewport (`defaultViewport: null` - website page will be in full width and height)
   const browser = await puppeteer.launch({
-    headless: false,
-    defaultViewport: null,
+    // headless: false,
+    // defaultViewport: null,
+    args: [
+      "--disable-setuid-sandbox",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+    ],
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
   });
 
   // Open a new page
@@ -90,7 +100,7 @@ const getQuotes = async () => {
   });
 
   // Display the products
-  console.log(products);
+  console.log('products',products);
 
   // Close the browser
   await browser.close();
