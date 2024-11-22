@@ -96,22 +96,9 @@ const getQuotes = async () => {
   await browser.close();
 };
 
-//getQuotes();
+getQuotes();
 
 
-// const { google } = require('googleapis');
-// const path = require('path');
-// const KEY_FILE_PATH = path.join(__dirname, 'service-account-key.json'); // Replace with your JSON key path
-// const SCOPES = ['https://www.googleapis.com/auth/analytics.readonly'];
-
-// // Create an analytics reporting client
-// const analyticsDataClient = google.analyticsdata({
-//   version: 'v1beta',
-//   auth: new google.auth.GoogleAuth({
-//     keyFile: KEY_FILE_PATH,
-//     scopes: SCOPES,
-//   }),
-// });
 
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
@@ -177,4 +164,4 @@ const fs = require('fs')
        console.log(outputs.variable.cpuData[0]);
    }
 
-   //runInference();
+   runInference();
