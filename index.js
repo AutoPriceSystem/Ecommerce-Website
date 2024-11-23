@@ -53,7 +53,6 @@ app.listen(PORT, () => {
 });
 
 
-
 const puppeteer = require("puppeteer");
 
 const getQuotes = async () => {
@@ -61,7 +60,7 @@ const getQuotes = async () => {
   // - a visible browser (`headless: false` - easier to debug because you'll see the browser in action)
   // - no default viewport (`defaultViewport: null` - website page will be in full width and height)
   const browser = await puppeteer.launch({
-    headless: true,
+    // headless: true,
     // defaultViewport: null,
     args: [
       "--disable-setuid-sandbox",
@@ -144,7 +143,7 @@ async function fetchRealTimePages() {
   }
 }
 
-fetchRealTimePages();
+//fetchRealTimePages();
 
 const onnxruntime = require('onnxruntime-node');
 const fs = require('fs')
@@ -161,11 +160,9 @@ const fs = require('fs')
        const standardizedInput = inputData.map((value, index) => {
            return (value - scalerParams.mean[index]) / scalerParams.scale[index];
        });
-
    
        // Create the input tensor for the model
        const tensor = new onnxruntime.Tensor('float32', new Float32Array(standardizedInput), [1, 4]);
-
 
        // Run inference
        const outputs = await session.run({ input: tensor });
@@ -175,3 +172,4 @@ const fs = require('fs')
    }
 
    runInference();
+
