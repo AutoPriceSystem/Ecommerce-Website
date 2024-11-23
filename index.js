@@ -53,10 +53,6 @@ app.listen(PORT, () => {
 });
 
 
-const puppeteer = require("puppeteer");
-
-
-
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
 // Create a client for the API
