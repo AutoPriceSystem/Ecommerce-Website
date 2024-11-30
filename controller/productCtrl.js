@@ -74,7 +74,7 @@ const getAllProducts = async (req, res) => {
         let Comp_Price = product.Original_Price;
 
         try {
-          const response = await axios.post('http://127.0.0.1:4000/scrape', {
+          const response = await axios.post('https://webscraping-av2g.onrender.com/scrape', {
             query: (product.Category.split(' ').join('') === 'SmartPhone' || product.Category.split(' ').join('') === 'Laptop') 
               ? product.Title + product.Category.split(' ').join('') 
               : product.Title,
