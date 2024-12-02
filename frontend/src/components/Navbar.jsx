@@ -13,7 +13,7 @@ import {
   SearchBar,
   Icons,
   MenuIcon,
-  Sidebar,
+  FiltersContainer,
   MobileIcon,
 } from "../StyledComponents/styledComponents";
 import useSidebar from "../hooks/useSidebar";
@@ -21,12 +21,12 @@ import { formatText } from "../utils/utils";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { useProduct } from "../contexts/ProductContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 const Navbar = () => {
   const { isSidebarOpen, toggleSidebar, sidebarRef } = useSidebar();
   const {searchProduct, filterProduct} = useProduct()
   const { cartItems } = useCart();
-
+  const {presentUser,adminId} = useAuth()
   const navigate = useNavigate()
   
 
@@ -35,7 +35,8 @@ const Navbar = () => {
       <Logo>
         <LogoImage src={logoImage} alt={formatText("Shopease Logo")} />
       </Logo>
-
+      {presentUser!=adminId &&
+<>
       <SearchBar >
         <FaSearch />
         <input type="text" placeholder="Search for products..." onChange={(e)=>{navigate("/shop");searchProduct(e.target.value)}} />
@@ -64,21 +65,21 @@ const Navbar = () => {
       <MobileIcon />
 
       <NavLinks>
-        <a href="/">Home</a>
-        <a href="/shop">Shop</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+        <Link to="/">Home</Link>
+        <Link to="/shop">Shop</Link>
+        <Link to="/about">About</Link>
+        <Link to="/contact">Contact</Link>
       </NavLinks>
-
+      </>}
       <Icons>
-        <CartDropdown className="cart-dropdown" cartItems={cartItems} />
+       {presentUser!=adminId && <CartDropdown className="cart-dropdown" cartItems={cartItems} />}
         <ProfileDropdown className="profile-dropdown" />
         <MenuIcon onClick={toggleSidebar}>
           <FaBars />
         </MenuIcon>
       </Icons>
 
-      <Sidebar ref={sidebarRef} isOpen={isSidebarOpen}>
+      {/* <Sidebar ref={sidebarRef} isOpen={isSidebarOpen}>
         <a href="/" onClick={toggleSidebar}>
           Home
         </a>
@@ -91,7 +92,7 @@ const Navbar = () => {
         <a href="/contact" onClick={toggleSidebar}>
           Contact
         </a>
-      </Sidebar>
+      </Sidebar> */}
     </Nav>
   );
 };

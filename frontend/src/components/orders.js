@@ -1,3 +1,0 @@
-
-
-const[ userid,setuser] = useState()

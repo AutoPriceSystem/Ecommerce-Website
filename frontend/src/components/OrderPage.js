@@ -68,7 +68,7 @@ const OrderPage = () => {
   const [orders,setOrders] = React.useState([])
   const[totalAmount,setTotalAmount] = React.useState(0.00)
   React.useEffect(()=>{
-    async function fetchOrderHistory(){ await axios.post("http://localhost:5000/api/orders/order-history",{
+    async function fetchOrderHistory(){ await axios.post("https://autopricesystem.onrender.com/api/orders/order-history",{
         user_id:presentUser
         }).then((res)=>{setOrders(res.data.data)})
     }
@@ -80,7 +80,7 @@ const OrderPage = () => {
         );
         setTotalAmount(totalAmount.toFixed(2))
     }
-  },[])
+  },[orders])
   // Calculate total amount
 
   
@@ -91,7 +91,7 @@ const OrderPage = () => {
         <OrderItem>
           <ItemImage src={item.productImage} alt={item.title} />
           <ItemDetails>
-            <ItemTitle>{item.title}</ItemTitle>
+            <ItemTitle>{item.productTitle}</ItemTitle>
             <ItemDate>{`Order Date: ${item.productPurchaseDate}`}</ItemDate>
             <Quantity>{`Quantity: ${item.productQuantity}`}</Quantity>
             <ItemPrice>{`$${item.productPrice.toFixed(2)}`}</ItemPrice>

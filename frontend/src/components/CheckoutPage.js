@@ -17,14 +17,13 @@ import {
 } from "../StyledComponents/CheckoutPageStyles";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const CheckoutPage = () => {
   const { cartItems, incrementItem, decrementItem, deleteItem } = useCart();
   const { presentUser } = useAuth();
   const [totalPrice, setTotalPrice] = useState(0);
-
-  
-
+  const navigate = useNavigate()
   // Calculate the total price whenever cartItems change
   useEffect(() => {
     const total = cartItems.reduce((sum, item) => sum + item.Original_Price * item.quantity, 0);
@@ -52,12 +51,32 @@ const CheckoutPage = () => {
     }
   };
 
+  async function PlaceOrder() {
+    try {
+      // Use Promise.all to ensure all requests complete
+      const requests = cartItems.map((item) => 
+        axios.post('https://autopricesystem.onrender.com/api/billing/productpurchase', {
+          user_id: presentUser,
+          product_id: item.productId,
+          price: item.Original_Price,
+          quantity: item.quantity,
+        })
+      );
+  
+      await Promise.all(requests); // Wait for all requests to complete
+      navigate("/orders"); // Navigate after all requests are successful
+    } catch (error) {
+      console.error("Error placing order:", error);
+      // Optionally show an error message to the user
+    }
+  }
+  
   return (
     <CheckoutContainer>
       <LeftSection>
         <AddressSection>
           <h3>From Saved Addresses</h3>
-          <button>Enter Delivery Pincode</button>
+          <h3 style={{color:'brown'}}>Pay On Delivery</h3>
         </AddressSection>
         <ProductList>
           {cartItems.length > 0 ? (
@@ -94,10 +113,7 @@ const CheckoutPage = () => {
             <span>Price ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
             <span>${totalPrice.toFixed(2)}</span>
           </PriceRow>
-          <PriceRow>
-            <span>Discount</span>
-            <span className="discount">- $0.00</span> {/* Add dynamic discounts if needed */}
-          </PriceRow>
+      
           <PriceRow>
             <span>Delivery Charges</span>
             <span className="free">$0 Free</span>
@@ -112,7 +128,7 @@ const CheckoutPage = () => {
           </TotalAmount>
           <SavingMessage>You will save $0 on this order</SavingMessage> {/* Add dynamic savings if needed */}
         </PriceDetails>
-        <PlaceOrderButton>Place Order</PlaceOrderButton>
+        <PlaceOrderButton onClick={()=>PlaceOrder()}>Place Order</PlaceOrderButton>
       </RightSection>
     </CheckoutContainer>
   );

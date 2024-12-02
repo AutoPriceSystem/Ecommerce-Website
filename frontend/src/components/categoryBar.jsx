@@ -12,6 +12,7 @@ import tv from "../Images/tv.jpg";
 import beauty from "../Images/beauty.jpg";
 import furniture from "../Images/furniture.jpg";
 import deal from "../Images/deal.png";
+import { useNavigate } from "react-router-dom";
 const categories = [
   { name: "Top Offers", icon: deal },
   { name: "Mobiles & Tablets", icon: mobile },
@@ -25,10 +26,11 @@ const categories = [
 ];
 
 const Categories = () => {
+  const navigate = useNavigate()
   return (
     <CategoryContainer>
       {categories.map((category, index) => (
-        <CategoryItem key={index}>
+        <CategoryItem key={index} onClick={()=>navigate("/shop")}>
           <img src={category.icon} alt={category.name} />
           <p>{category.name}</p>
         </CategoryItem>

@@ -7,8 +7,9 @@ import {
   GridImage,
 } from "../StyledComponents/OfferGridStyles"; // Import styled components
 import p3 from "../Images/blog-09.png";
-
+import { useNavigate } from "react-router-dom";
 const OfferGrid = () => {
+  const navigate = useNavigate()
   return (
     <GridContainer>
       <GridItem
@@ -20,9 +21,9 @@ const OfferGrid = () => {
           src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?fit=crop&w=800&q=80"
           alt="Offer 6"
         />
-        <div className="content">
+        <div className="content" onClick={()=>navigate("/shop")}>
           <OfferTitle>Get up to 50% off!</OfferTitle>
-          <OfferButton whileTap={{ scale: 0.95 }}>Get Discount</OfferButton>
+          <OfferButton whileTap={{ scale: 0.95 }}>Browse our Store</OfferButton>
         </div>
       </GridItem>
 
@@ -50,7 +51,7 @@ const OfferGrid = () => {
         <GridImage src={p3} alt="Offer 3" />
         <div className="content">
           <OfferTitle>Exclusive Deals</OfferTitle>
-          <OfferButton whileTap={{ scale: 0.95 }}>Avail Offers</OfferButton>
+          <OfferButton whileTap={{ scale: 0.95 }}>Get yours Today</OfferButton>
         </div>
       </GridItem>
 
@@ -79,7 +80,7 @@ const OfferGrid = () => {
         />
         <div className="content">
           <OfferTitle>Exclusive Deals</OfferTitle>
-          <OfferButton whileTap={{ scale: 0.95 }}>Avail Offers</OfferButton>
+          <OfferButton whileTap={{ scale: 0.95 }}>See What's New</OfferButton>
         </div>
       </GridItem>
       <GridItem

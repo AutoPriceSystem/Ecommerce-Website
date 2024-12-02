@@ -18,6 +18,10 @@ import Checkout  from "./components/CheckoutPage";
 import Admin from "./Admin/Adminpage";
 import PageNotFound from "./components/PageNotFound";
 import OrderPage from "./components/OrderPage";
+import ProductDetails from "./components/productDetails";
+import AboutUs from "./components/AboutUs";
+import ContactUs from "./components/Contact";
+
 const App = () => {
 
   const {presentUser,adminId} = useAuth()
@@ -25,45 +29,51 @@ const App = () => {
 
   return (
 
-      <CartProvider>
+ 
         <OfferProvider>
           <ProductProvider>
+          <CartProvider>
         <Router>
           <Navbar />
           <CartDropdown />
           <main>
             <div style={{ padding: "90px 30px" }}>
               <Routes>
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile" element={presentUser!=adminId ?<ProfilePage />:<PageNotFound />} />
                 <Route
                   path="/"
                   element={
+                    presentUser!=adminId ?
                     <>
                       <Categories />
                       <OfferGrid />
                     </>
+                    : <PageNotFound />
                   }
                 />
-                <Route path="/shop" element={<CategorySection   /> }/>
-                <Route path="/checkout"  element={<Checkout />} />
-                
+                <Route path="/shop" element={presentUser!=adminId ?<CategorySection />:<PageNotFound />}/>
+                <Route path="/checkout"  element={presentUser!=adminId ?<Checkout />:<PageNotFound />} />
+                <Route path="/about"  element={presentUser!=adminId ?<AboutUs />:<PageNotFound />} />
+                <Route path="/contact"  element={presentUser!=adminId ?<ContactUs />:<PageNotFound />} />
+                <Route path="/productdetails" element={presentUser!=adminId ?<ProductDetails />:<PageNotFound />} />
      
-                <Route path="/products" element={<ProductCard />} />
+                <Route path="/products" element={presentUser!=adminId ?<ProductCard />:<PageNotFound />} />
                 <Route
                     path="/orders"
-                    element={<OrderPage  />}
+                    element={presentUser!=adminId ?<OrderPage />:<PageNotFound />}
                   />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/login" element={presentUser!=adminId ?<LoginPage />:<PageNotFound />} />
+                <Route path="/signup" element={presentUser!=adminId ?<SignUpPage />:<PageNotFound />} />
                 <Route path="/admin" element={presentUser==adminId ?<Admin />:<PageNotFound/>} />
               </Routes>
             </div>
           </main>
           <Footer />
         </Router>
+        </CartProvider>
         </ProductProvider>
         </OfferProvider>
-      </CartProvider>
+  
 
   );
 };

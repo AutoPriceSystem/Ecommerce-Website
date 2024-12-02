@@ -12,7 +12,7 @@ import {
 const useAuthFunctions = () => {
   const [data, setData] = useState({ email: "", password: "", name:"", mobile:"", address:"" });
   const navigate = useNavigate();
-  const {  login,logout,presentUser,SetUserDetails } = useAuth();
+  const {  login,logout,adminId,SetUserDetails } = useAuth();
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -28,12 +28,12 @@ try{
       return error.code
     }
 try{
-      await axios.post("http://localhost:5000/api/user/login",{
+      await axios.post("https://autopricesystem.onrender.com/api/user/login",{
         email: email,
         mobile: mobile,
-        }).then(async(result)=>{localStorage.setItem('token',result.data.token);await axios.post(`http://localhost:5000/user/getUserDetails`,{
+        }).then(async(result)=>{localStorage.setItem('token',result.data.token);await axios.post(`https://autopricesystem.onrender.com/user/getUserDetails`,{
           userId:result.data.userId
-}).then((res)=> {SetUserDetails(res.data);login(res.data._id);navigate("/"); })})
+}).then((res)=> {SetUserDetails(res.data);login(res.data._id);if(res.data._id!=adminId){navigate("/")}else {navigate("/admin")} })})
         }
           catch (err) {
        if(err.response)
@@ -56,7 +56,7 @@ try{
     const { email, password, name , mobile, address } = data;
 
     try{
-      await axios.post("http://localhost:5000/api/user/register",{
+      await axios.post("https://autopricesystem.onrender.com/api/user/register",{
       name : name,
       email: email,
       mobile: mobile,
@@ -87,7 +87,6 @@ try{
     navigate("/login");
   };
   const signout=()=>{
-    signOut(auth)
     logout()
   }
   return {

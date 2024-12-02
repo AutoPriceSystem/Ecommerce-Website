@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext";
+import { useProduct } from "./ProductContext";
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
@@ -8,19 +9,29 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const { presentUser } = useAuth();
-
+  const {Products} = useProduct()
   useEffect(()=>{
-    console.log(presentUser)
-  fetchCartItems(presentUser)
-  },[presentUser])
+  fetchCartItems()
+  },[Products,presentUser])
   // Fetch cart items from backend
   const fetchCartItems = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/cart/user-cart`,{
+      const response = await axios.post(`https://autopricesystem.onrender.com/api/cart/user-cart`,{
         userId:presentUser
       });
       if (response.data && response.data.items) {
-        setCartItems(response.data.items);
+        const updatedItems = response.data.items.map(item => {
+          const product = Products.find(product => product._id === item.productId);
+          if (product) {
+            return {
+              ...item,
+              Original_Price: product.Original_Price // Replace original_price with price from Products
+            };
+          }
+          return item; // If no match is found, keep the item unchanged
+        });
+        console.log(updatedItems)
+        setCartItems(updatedItems); // Update cart items with modified array
       } 
       else if (response.data && response.data.message=="Cart not found."){
         setCartItems([])
@@ -34,7 +45,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = async ( productId,productTitle,productCategory,productImage,product_Original_Price) => {
     try {
 
-      const response = await axios.post("http://localhost:5000/api/cart/add", {
+      const response = await axios.post("https://autopricesystem.onrender.com/api/cart/add", {
         userId:presentUser,
         productId,productTitle,productCategory,productImage,product_Original_Price
       });
@@ -52,7 +63,7 @@ export const CartProvider = ({ children }) => {
   // Increment item quantity
   const incrementItem = async ( itemId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/cart/increase`, { userId:presentUser, itemId });
+      const response = await axios.post(`https://autopricesystem.onrender.com/api/cart/increase`, { userId:presentUser, itemId });
       if (response.data && response.data.items) {
         setCartItems(response.data.items);
       }
@@ -64,7 +75,7 @@ export const CartProvider = ({ children }) => {
   // Decrement item quantity
   const decrementItem = async ( itemId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/cart/decrease`, { userId:presentUser, itemId });
+      const response = await axios.post(`https://autopricesystem.onrender.com/api/cart/decrease`, { userId:presentUser, itemId });
       if (response.data && response.data.items) {
         setCartItems(response.data.items);
       }
@@ -76,7 +87,7 @@ export const CartProvider = ({ children }) => {
   // Delete item from cart
   const deleteItem = async ( itemId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/cart/remove-item`, {userId:presentUser,itemId});
+      const response = await axios.post(`https://autopricesystem.onrender.com/api/cart/remove-item`, {userId:presentUser,itemId});
       if (response.data && response.data.items) {
         setCartItems(response.data.items);
       }

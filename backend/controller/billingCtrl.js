@@ -1,6 +1,6 @@
 const User = require('../models/usermodel');
 const Product = require('../models/productModel');
-
+const Cart = require('../models/Cart.js')
 // Purchase product
 const productPurchase = async (req, res) => {
   try {
@@ -13,12 +13,12 @@ const productPurchase = async (req, res) => {
       product.sales_history.push({
         user_id,
         price,
-        date: new Date(), // Add the current date
+        date: new Date().toISOString().split('T')[0], // Add the current date
         quantity, // Add the quantity
       });
       await product.save();
     } else {
-      return res.status(400).send("Product not found.");
+      return res.status(400).send(`Product not found. ${product_id}`);
     }
 
     // Update the user's purchase history
@@ -27,14 +27,19 @@ const productPurchase = async (req, res) => {
       user.purchase_history.push({
         product_id,
         price,
-        date: new Date(), // Add the current date
+        date: new Date().toISOString().split('T')[0], // Add the current date
         quantity, // Add the quantity
       });
       await user.save();
-      return res.status(200).send("Purchase successful.");
+  
     } else {
       return res.status(400).send("User not found.");
     }
+
+    await Cart.findOneAndDelete({userId:user_id}).then(()=>{console.log("Cart document deleted successfully.");
+      return res.status(200).send("Purchase successful.")}).catch(()=>{ console.log("No cart document found with the given ID.");
+        return res.status(400).send("Cart not found.")})  
+  
   } catch (error) {
     console.error("Error processing purchase:", error);
     return res.status(500).send("Internal server error.");

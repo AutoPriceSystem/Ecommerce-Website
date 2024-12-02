@@ -16,12 +16,15 @@ import {
   GridItem,
 } from "../StyledComponents/ProfilePageStyles";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
 const ProfilePage = () => {
-  const {presentUserDetails,presentUser} = useAuth()
+  const {presentUserDetails,presentUser,adminId} = useAuth()
   const [email, setEmail] = useState("");
   const [name, setName] = useState(""); // Added state to hold the user's name
   const [profilePic, setProfilePic] = useState(defaultProfilePic);
-
+  const navigate = useNavigate()
+  const {cartItems} = useCart()
   useEffect(() => {
  
     if (presentUser) {
@@ -68,7 +71,7 @@ const ProfilePage = () => {
 
   return (
     <ProfileContainer>
-      <StyledProfileName>Your Account</StyledProfileName>
+      <StyledProfileName>{presentUser==adminId ?'Admin Profile' : 'Your Account'}</StyledProfileName>
       <ProfileHeader>
         <ProfileImageContainer>
           <ProfileImage src={profilePic} alt="Profile" />
@@ -78,49 +81,48 @@ const ProfilePage = () => {
           </EditOverlay>
         </ProfileImageContainer>
         <ProfileDetails>
+        {presentUser==adminId && <ProfileName style={{fontSize:18,textDecoration:'underline',color:'skyblue'}}>Admin ID: {presentUserDetails._id}</ProfileName>}
           <ProfileName>Name: {name}</ProfileName> {/* Display user name */}
           <ProfileName>Email: {email}</ProfileName> {/* Display user email */}
+          <ProfileName>Contact: {presentUserDetails.mobile}</ProfileName> {/* Display user email */}
+      
         </ProfileDetails>
       </ProfileHeader>
 
-      <GridContainer>
-        <GridItem>
+     {presentUser!=adminId&& <GridContainer>
+        <GridItem onClick={()=>navigate("/orders")}>
           <h3>Your Orders</h3>
-          <p>{presentUserDetails.purchase_history.length>0&&presentUserDetails.purchase_history.map((order)=><p>{order.product_id}</p>)}</p>
+          <p>{presentUserDetails.purchase_history.length} Products purchased</p>
         </GridItem>
         <GridItem>
-          <h3>Your Addresses</h3>
+          <h3>Your Address</h3>
           <p>{presentUserDetails.address}</p>
         </GridItem>
+        
         <GridItem>
-          <h3>Login & Security</h3>
-          <p>Edit login, name, and mobile number</p>
+          <h3>Purchase History</h3>
+          <p>
+  {Math.abs(
+    Math.ceil(
+      (new Date(
+        Math.max(
+          ...presentUserDetails.purchase_history
+            .map(item => new Date(item.date))
+            .filter(date => !isNaN(date))  // Filter out invalid dates
+        )
+      ) - new Date()) / (1000 * 60 * 60 * 24)
+    )
+  )} days since last purchase!
+</p>
+
+
         </GridItem>
         <GridItem>
-          <h3>Your Payments</h3>
-          <p>Manage payment methods and settings</p>
+          <h3>Your Cart</h3>
+          <p>{cartItems.length} Products in Cart</p>
         </GridItem>
-        <GridItem>
-          <h3>Prime</h3>
-          <p>Manage your membership and view benefits</p>
-        </GridItem>
-        <GridItem>
-          <h3>Gift Cards</h3>
-          <p>View balance or redeem a card</p>
-        </GridItem>
-        <GridItem>
-          <h3>Your Lists</h3>
-          <p>View, modify, and share your lists</p>
-        </GridItem>
-        <GridItem>
-          <h3>Digital Services & Device Support</h3>
-          <p>Troubleshoot device issues</p>
-        </GridItem>
-        <GridItem>
-          <h3>Customer Service</h3>
-          <p>Browse self-service options or contact us</p>
-        </GridItem>
-      </GridContainer>
+        
+      </GridContainer>}
     </ProfileContainer>
   );
 };

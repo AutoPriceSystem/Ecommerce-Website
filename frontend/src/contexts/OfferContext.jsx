@@ -5,9 +5,14 @@ const OfferContext = createContext();
 export const useOffer = () => useContext(OfferContext);
 
 export const OfferProvider = ({ children }) => {
-    const[Offer, setOffer] = useState(false)
+    const[Offer, setOffer] = useState(()=>{
+      const storedOffer = localStorage.getItem("Offer");
+    return storedOffer ? JSON.parse(storedOffer) : false;
+    })
 
-const toggleOffer = ()=> {console.log(Offer);setOffer(!Offer)}
+
+
+const toggleOffer = ()=> {localStorage.setItem('Offer',!Offer);setOffer(!Offer)}
   return (
     <OfferContext.Provider value={{ Offer , toggleOffer }}>
 {children}

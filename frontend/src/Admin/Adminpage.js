@@ -2,13 +2,15 @@ import React,{useState,useEffect} from 'react';
 import Sidebar from './Sidebar';
 import AdminDashBoard from './Dashboard';
 import ProfilePage from '../components/Profilepage';
+import Management from './Management';
 import  {AdminContainer}  from '../StyledComponents/AdminPageStyles';
 import {useLocation} from 'react-router-dom'
+import { useProduct } from '../contexts/ProductContext';
 const Admin = () => {
 
     const location = useLocation();  // Get current location object
     const [currentFragment, setCurrentFragment] = useState(location.hash);
-  
+    const {Products} = useProduct()
     // Whenever location.hash (fragment) changes, update the state
     useEffect(() => {
       const handleHashChange = () => {
@@ -27,7 +29,7 @@ const Admin = () => {
     return (
       <AdminContainer>
         <Sidebar />
-        {currentFragment=="#dashboard" ?       <AdminDashBoard />: <ProfilePage />}
+        {currentFragment=="#dashboard" ?       <AdminDashBoard />:currentFragment=="#management" ? <Management />:<ProfilePage />}
   
       </AdminContainer>
     );

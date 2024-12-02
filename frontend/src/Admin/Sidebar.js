@@ -7,6 +7,7 @@ const Sidebar = () => {
     <SidebarContainer>
       <SidebarLogo>ADMIN</SidebarLogo>
       <SidebarLink href="#dashboard">Dashboard</SidebarLink>
+      <SidebarLink href="#management">Management</SidebarLink>
       <SidebarLink href="#profile">Profile</SidebarLink>
       {/* <SidebarLink href="#">Subscription</SidebarLink>
       <SidebarLink href="#">Notification</SidebarLink>

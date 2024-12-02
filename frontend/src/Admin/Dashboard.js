@@ -12,7 +12,7 @@ import {
     Legend
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-
+import {useProduct} from '../contexts/ProductContext'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -25,24 +25,18 @@ ChartJS.register(
 
 const AdminDashBoard = () => {
     const [product, setProduct] = React.useState({});
+    const [selectedProductId, setSelectedProductId] = React.useState("");
     const [currentMonthIndex, setCurrentMonthIndex] = React.useState(new Date().getMonth()); // Track current month (0-11)
     const [salesData, setSalesData] = React.useState(null); // Store the sales data for the current month
-    const [allProducts, setAllProducts] = React.useState([]);
     const {toggleOffer, Offer} = useOffer()
-
-    React.useEffect(() => {
-        // Fetch all products
-        axios.get("http://localhost:5000/api/products/getAllProducts")
-            .then((res) => setAllProducts(res.data.data))
-            .catch((error) => console.error("Error fetching all products:", error));
-
-        // Fetch product details
-        axios.post("http://localhost:5000/api/products/getSingleProduct", {
-            product_id: '67039f5ca3a5bfc4bb947c14'
-        })
-            .then((res) => setProduct(res.data.data))
-            .catch((error) => console.error("Error fetching single product:", error));
-    }, []);
+    const {Products} = useProduct()
+function FetchProductDetails(id){
+    axios.post("https://autopricesystem.onrender.com/api/products/getSingleProduct", {
+        product_id: id
+    })
+        .then((res) => setProduct(res.data.data))
+        .catch((error) => console.error("Error fetching single product:", error));
+}
 
     const months = [
         "January", "February", "March", "April", "May", "June", 
@@ -56,17 +50,25 @@ const AdminDashBoard = () => {
         const dailySales = new Array(30).fill(0);  // Initialize daily sales to 0
 
         product.sales_history.forEach((sale) => {
-            const saleDate = new Date(sale.date);
-            if (saleDate.getMonth() === month) {
-                const day = saleDate.getDate();
+            const [year, saleMonth, saleDay] = sale.date.split("-").map(Number); // Parse the "YYYY-MM-DD" format
+            if (saleMonth - 1 === month) { // Months are 0-indexed in JavaScript
                 const saleValue = sale.quantity * sale.price;
-                dailySales[day - 1] += saleValue;  // Sum up sales for each day
+                dailySales[saleDay - 1] += saleValue; // Sum up sales for each day
             }
         });
 
         return { days: daysInMonth, sales: dailySales };
     };
-
+    const handleChange = (event) => {
+        const selectedId = event.target.value;
+        setSelectedProductId(selectedId);
+    
+        // Find the selected product to log details
+        const selectedProduct = Products.find((product) => product._id === selectedId);
+        if (selectedProduct) {
+          FetchProductDetails(selectedProduct._id)
+        }
+      };
     // Fetch sales data every time the month changes
     React.useEffect(() => {
         const { days, sales } = getSalesDataForMonth(currentMonthIndex);
@@ -108,20 +110,39 @@ const AdminDashBoard = () => {
     };
 
     const averagePercentageDifference = product.sales_history && product.Original_Price
-        ? product.sales_history.reduce((sum, sales) => {
+        ? product.sales_history.length>0 ?product.sales_history.reduce((sum, sales) => {
             const percentageDifference = ((sales.price - product.Original_Price) / product.Original_Price) * 100;
             return sum + percentageDifference;
         }, 0) / product.sales_history.length
+        :0
         : null;
     
     
     return (
-        <div>
+        <div style={{textAlign:'center'}}>
+
+<div>
+      <h3 >Choose a product to monitor Sales </h3>
+      <select
+        id="product-select"
+        value={selectedProductId}
+        onChange={handleChange}
+      >
+        <option value="" disabled>
+          Select a product
+        </option>
+        {Products.map((product) => (
+          <option key={product._id} value={product._id}>
+            {product.Title}
+          </option>
+        ))}
+      </select>
+    </div>
+          {product._id &&<>
+            <h1>{product.Title} Sales</h1>
+            <img src={product.Image} alt={product.Title}   style={{ maxWidth: "75%", maxHeight: "50%", display: "block", margin: "0 auto" }} />
           
-            <h1>Product Sales</h1>
-            <img src={product.Image} alt={product.Title} />
-            <h4>{product.Title}</h4>
-            <p>${product.Original_Price}</p>
+            <p>Original Price ${product.Original_Price}</p>
             {averagePercentageDifference !== null ? (
                 <p>Profit / Loss Percentage: {averagePercentageDifference.toFixed(2)}%</p>
             ) : (
@@ -137,15 +158,18 @@ const AdminDashBoard = () => {
 
             {/* Sales data chart */}
             {salesData && (
-                <Line data={chartData} options={chartOptions} />
+                <Line data={chartData} options={chartOptions}      style={{ maxWidth: "100%", height: "auto" }} />
             )}
+        </>}
+        <br />
 
 <div>
-        <button onClick={()=>toggleOffer()}>Toggle Season Offer</button>
+        <button onClick={()=>toggleOffer()}>{Offer ? 'Disable' : 'Enable'} Season Offer</button>
         <p>Season Offer: {Offer ? "Yes" : "No"}</p>
 
-        
+          
         </div>
+
         </div>
     );
 };

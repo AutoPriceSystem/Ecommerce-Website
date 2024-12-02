@@ -15,8 +15,17 @@ const getUserById = async (req, res) => {
   }
 };
 
-  
+const getUserCount = async (req, res) => {
+  try {
+    // Get the count of all users
+    const userCount = await User.countDocuments(); 
+    
+    res.json({ count: userCount });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 
-module.exports = { getUserById };
+module.exports = { getUserById,getUserCount };
 
 

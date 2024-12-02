@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect,useRef } from "react";
 import axios from "axios";
+import { useOffer } from "./OfferContext";
 
 
 const ProductContext = createContext();
@@ -11,11 +12,15 @@ export const ProductProvider = ({ children }) => {
     let Search = useRef("")
     const[Products, setProducts] = useState([])
     const[AllProducts,setAllProducts] = useState([])
+    const {Offer} = useOffer()
     useEffect(()=>{
         async function fetchData(){
         try {
-            const response = await axios.get(
-              "http://localhost:5000/api/products/getallproducts"
+          console.log(Offer)
+            const response = await axios.post(
+              "https://autopricesystem.onrender.com/api/products/getallproducts",{
+                season_offer:Offer
+              }
             );
             setAllProducts(response.data.data);
             setProducts(response.data.data)

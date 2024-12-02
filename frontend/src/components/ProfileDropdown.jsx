@@ -58,23 +58,23 @@ const ProfileDropdown = () => {
       {presentUser ==adminId? (
         <DropdownMenu isOpen={isOpen}>
     
-          <DropdownItem href="/settings">Settings</DropdownItem>
-          <DropdownItem href="/help">Help</DropdownItem>
+          
+          
           <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
         </DropdownMenu>
-      ) : 
-      (
-        <DropdownMenu>
-        <DropdownItem onClick={goToProfile}>My Profile</DropdownItem>
-        <DropdownItem href="/settings">Settings</DropdownItem>
-        <DropdownItem href="/help">Help</DropdownItem>
-        <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
-        </DropdownMenu>
-      )
+      ) : presentUser?
       (
         <DropdownMenu isOpen={isOpen}>
-          <DropdownItem href="/settings">Settings</DropdownItem>
-          <DropdownItem href="/help">Help</DropdownItem>
+        <DropdownItem onClick={goToProfile}>My Profile</DropdownItem>
+        
+        
+        <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+        </DropdownMenu>
+      ):
+      (
+        <DropdownMenu isOpen={isOpen}>
+          
+          
           <DropdownItem href="/login">Login</DropdownItem>
         </DropdownMenu>
       )}

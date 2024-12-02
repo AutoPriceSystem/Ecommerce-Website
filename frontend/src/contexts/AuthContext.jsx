@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner"; // Import the loading spinner
-
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -17,8 +17,10 @@ setLoading(false)
 if(  localStorage.getItem('user') &&  localStorage.getItem('token')){
   const item  = localStorage.getItem('user')
   const obj = JSON.parse(item);
-setPresentUser(obj._id)
-setPresentUserDetails(obj)
+  axios.post(`https://autopricesystem.onrender.com/user/getUserDetails`,{
+    userId:obj._id
+}).then((res)=>{setPresentUser(res.data._id)
+  setPresentUserDetails(res.data)})
 }
 },[])
 

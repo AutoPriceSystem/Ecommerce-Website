@@ -49,7 +49,7 @@ const CartDropdown = () => {
   // Increment item quantity
   const handleIncrement = (itemId) => {
     if (presentUser) {
-      incrementItem( itemId);
+      incrementItem( itemId)
     }
   };
 
@@ -83,6 +83,7 @@ const CartDropdown = () => {
   // Proceed to checkout
   const handleProceedToBuy = () => {
     navigate("/checkout");
+    toggleDropdown()
   };
 
   return (

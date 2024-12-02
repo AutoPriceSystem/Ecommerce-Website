@@ -174,3 +174,107 @@ export const Sidebar = styled.div`
     }
   }
 `;
+
+
+export const FiltersContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 20px;
+  
+  select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #6200ea;
+    }
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+`;
+
+export const FilterButtonContainer = styled.div`
+  position: relative; /* Ensure the dropdown is positioned relative to the button */
+  margin-left: 10px;
+
+  button {
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    &:hover {
+      background-color: #985eff;
+    }
+  }
+`;
+
+export const FilterDropdownContainer = styled.div`
+  position: absolute;
+  top: 100%; /* Position just below the button */
+  right: 0; /* Align to the right edge of the button */
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 100;
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  div {
+    margin-bottom: 15px;
+
+    label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    select {
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  }
+
+  button {
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #985eff;
+    }
+  }
+`;
+
+export const FiltersOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+`;
