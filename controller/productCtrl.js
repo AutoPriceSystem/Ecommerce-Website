@@ -127,7 +127,7 @@ const getAllProducts = async (req, res) => {
           const outputs = await session.run({ input: tensor });
           console.log(product.Title,'UserTraffic:'+User_Traffic,'Sold:'+ product.sales_history.length,
             'Release_Date:'+dayDifference,
-            'Comp_Diff'+Comp_Diff,'Valuation:'+outputs.variable.cpuData[0])
+            'Comp_Diff:'+Comp_Diff,'Valuation:'+outputs.variable.cpuData[0])
           return outputs.variable.cpuData[0];
         }
 
