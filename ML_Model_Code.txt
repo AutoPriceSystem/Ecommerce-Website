@@ -1,0 +1,108 @@
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+import pandas as pd
+import numpy as np
+import lightgbm as lgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import joblib
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+import json
+import onnxmltools
+
+# Read the data
+data = pd.read_excel("pricingsystem.xlsx")
+
+# Identify categorical and numerical columns
+categorical_features = ['Category']
+numerical_features = ['User_Traffic', 'Sold', 'Product_Release', 'Competitor_Diff']
+
+# Initialize the LabelEncoder
+label_encoder = LabelEncoder()
+data['Category'] = label_encoder.fit_transform(data['Category'])
+
+# Define a ColumnTransformer to handle preprocessing
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numerical_features),
+        ('cat', 'passthrough', categorical_features)
+    ]
+)
+
+# Apply transformations
+X = preprocessor.fit_transform(data)
+
+# Convert target to a NumPy array
+y = data['Valuation'].values
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Set up the LightGBM regressor
+model = lgb.LGBMRegressor(
+    boosting_type='gbdt',  # Gradient Boosting Decision Tree
+    objective='regression',  # Regression task
+    metric='l2',  # L2 loss (mean squared error)
+    num_leaves=31,  # Number of leaves in one tree
+    learning_rate=0.05,  # Learning rate
+    n_estimators=100,  # Number of boosting iterations
+    random_state=42
+)
+
+# Fit the model
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+# Print performance metrics
+print(f"LightGBM Model Performance:")
+print(f"Mean Squared Error (MSE): {mse}")
+print(f"Mean Absolute Error (MAE): {mae}")
+print(f"Root Mean Squared Error (RMSE): {rmse}")
+print(f"R-squared (R²): {r2}")
+
+# Save the model and preprocessor
+joblib.dump(model, 'model.pkl')
+joblib.dump(preprocessor, 'preprocessor.pkl')
+joblib.dump(label_encoder, 'label_encoder.pkl')
+
+# Convert LightGBM model to ONNX
+onnx_model = onnxmltools.convert_lightgbm(model, initial_types=[('input', FloatTensorType([None, 5]))])
+
+# Save the ONNX model
+with open("model.onnx", "wb") as f:
+    f.write(onnx_model.SerializeToString())
+
+# Save the LabelEncoder parameters
+label_encoder_params = {
+    "classes": label_encoder.classes_.tolist()
+}
+with open('label_encoder_params.json', 'w') as f:
+    json.dump(label_encoder_params, f)
+
+print("Label encoder parameters saved to 'label_encoder_params.json'")
+
+# Get the StandardScaler from the preprocessor
+scaler = preprocessor.transformers_[0][1]  # StandardScaler for numerical features
+
+print("Shape of preprocessed input data (X):", X.shape)
+
+# Save the StandardScaler parameters (mean and scale)
+scaler_params = {
+    "mean": scaler.mean_.tolist(),
+    "scale": scaler.scale_.tolist()
+}
+
+# Save the parameters to a JSON file
+with open('scaler_params.json', 'w') as f:
+    json.dump(scaler_params, f)
+
+print("Scaler parameters saved to 'scaler_params.json'")

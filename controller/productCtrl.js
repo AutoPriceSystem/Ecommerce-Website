@@ -125,7 +125,9 @@ const getAllProducts = async (req, res) => {
           const tensor = new onnxruntime.Tensor('float32', new Float32Array(finalInput), [1, 5]);
 
           const outputs = await session.run({ input: tensor });
-          console.log(product.Title,outputs.variable.cpuData[0])
+          console.log(product.Title,'UserTraffic:'+User_Traffic,'Sold:'+ product.sales_history.length,
+            'Release_Date:'+dayDifference,
+            'Comp_Diff'+Comp_Diff,'Valuation:'+outputs.variable.cpuData[0])
           return outputs.variable.cpuData[0];
         }
 
